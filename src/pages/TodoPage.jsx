@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Footer, Header, TodoCollection, TodoInput } from 'components';
 import { getTodos, createTodo, patchTodo, deleteTodo } from '../api/todos.js';
+import Swal from 'sweetalert2';
 
 const TodoPage = () => {
   const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getTodosAsync = async () => {
@@ -130,6 +133,18 @@ const TodoPage = () => {
     }
   }
 
+  function handleLogout() {
+    localStorage.removeItem('authToken');
+    Swal.fire({
+      position: 'top',
+      title: '登出成功',
+      timer: 1000,
+      icon: 'success',
+      showCancelButton: true,
+    });
+    navigate('/login');
+  }
+
   return (
     <div>
       TodoPage
@@ -147,7 +162,7 @@ const TodoPage = () => {
         onSave={handleSave}
         onDelete={handleDelete}
       />
-      <Footer leftNum={todos.length} />
+      <Footer leftNum={todos.length} handleLogout={handleLogout} />
     </div>
   );
 };

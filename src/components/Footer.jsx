@@ -31,11 +31,11 @@ const StyledButton = styled.button`
   }
 `;
 
-const Footer = ({ leftNum }) => {
+const Footer = ({ leftNum, handleLogout }) => {
   return (
     <StyledFooter>
       <p>剩餘項目數： {leftNum}</p>
-      <StyledButton>登出</StyledButton>
+      <StyledButton onClick={handleLogout}>登出</StyledButton>
     </StyledFooter>
   );
 };

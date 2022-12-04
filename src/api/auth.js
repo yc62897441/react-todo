@@ -21,7 +21,6 @@ export const login = async (payload) => {
 export const register = async (payload) => {
   try {
     const { username, email, password } = payload;
-    console.log('username, email, password', username, email, password);
     const { data } = await axios.post(`${baseUrl}/register`, {
       username,
       email,
@@ -36,3 +35,17 @@ export const register = async (payload) => {
     console.error(error);
   }
 };
+
+export const checkPermission = async(authToken) => {
+  try {
+    const response = await axios.get(`${baseUrl}/test-token`, {
+      headers: {
+        Authorization: 'Bearer ' + authToken,
+      },
+    });
+
+    return response.data.success
+  } catch(error) {
+    console.error('[Check Permission Failed]:', error);
+  }
+}

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../api/auth.js';
+import { useAuth } from '../contexts/authContext';
 import {
   AuthContainer,
   AuthInputContainer,
@@ -16,14 +16,21 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  const { login, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/todos');
+    }
+  }, [navigate, isAuthenticated]);
+
   async function handleClick() {
     try {
       if (username.length === 0 || password.length === 0) {
         return;
       }
-      const { success, authToken } = await login({ username, password });
+      const success = await login({ username, password });
       if (success) {
-        localStorage.setItem('authToken', authToken);
         Swal.fire({
           position: 'top',
           title: '登入成功',
@@ -31,7 +38,6 @@ const LoginPage = () => {
           icon: 'success',
           showCancelButton: true,
         });
-        navigate('/todos');
         return;
       }
       Swal.fire({

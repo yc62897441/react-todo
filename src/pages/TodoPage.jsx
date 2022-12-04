@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/authContext';
 import { Footer, Header, TodoCollection, TodoInput } from 'components';
 import { getTodos, createTodo, patchTodo, deleteTodo } from '../api/todos.js';
-import Swal from 'sweetalert2';
 
 const TodoPage = () => {
   const [todos, setTodos] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const navigate = useNavigate();
+  const { isAuthenticated, currentMember } = useAuth();
 
   useEffect(() => {
     const getTodosAsync = async () => {
@@ -28,6 +29,12 @@ const TodoPage = () => {
     };
     getTodosAsync();
   }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [navigate, isAuthenticated]);
 
   function handleChange(value) {
     setInputValue(value);
@@ -133,22 +140,10 @@ const TodoPage = () => {
     }
   }
 
-  function handleLogout() {
-    localStorage.removeItem('authToken');
-    Swal.fire({
-      position: 'top',
-      title: '登出成功',
-      timer: 1000,
-      icon: 'success',
-      showCancelButton: true,
-    });
-    navigate('/login');
-  }
-
   return (
     <div>
       TodoPage
-      <Header />
+      <Header username={currentMember.name} />
       <TodoInput
         inputValue={inputValue}
         onChange={handleChange}
@@ -162,7 +157,7 @@ const TodoPage = () => {
         onSave={handleSave}
         onDelete={handleDelete}
       />
-      <Footer leftNum={todos.length} handleLogout={handleLogout} />
+      <Footer leftNum={todos.length}/>
     </div>
   );
 };

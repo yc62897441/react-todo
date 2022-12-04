@@ -1,3 +1,5 @@
+import { useAuth } from 'contexts/authContext';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const StyledFooter = styled.footer`
@@ -31,11 +33,17 @@ const StyledButton = styled.button`
   }
 `;
 
-const Footer = ({ leftNum, handleLogout }) => {
+const Footer = ({ leftNum }) => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  function handleClick() {
+    logout();
+    navigate('/login');
+  }
   return (
     <StyledFooter>
       <p>剩餘項目數： {leftNum}</p>
-      <StyledButton onClick={handleLogout}>登出</StyledButton>
+      <StyledButton onClick={handleClick}>登出</StyledButton>
     </StyledFooter>
   );
 };

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { register } from '../api/auth';
+import { useAuth } from '../contexts/authContext';
 import {
   AuthContainer,
   AuthInputContainer,
@@ -16,6 +16,13 @@ const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { register, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/todos');
+    }
+  }, [navigate, isAuthenticated]);
 
   async function handleClick() {
     try {
@@ -27,13 +34,12 @@ const SignUpPage = () => {
         return;
       }
 
-      const { success, authToken } = await register({
+      const success = await register({
         username,
         email,
         password,
       });
       if (success) {
-        localStorage.setItem('authToken', authToken);
         Swal.fire({
           position: 'top',
           title: '註冊成功',
